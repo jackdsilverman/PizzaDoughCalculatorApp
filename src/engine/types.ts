@@ -12,8 +12,8 @@ export interface DoughInput {
   count: number;
   /** Advanced: total hydration as a percentage of total flour. Defaults to the style's value. */
   hydrationPct?: number;
-  /** Advanced: days of cold fermentation. 0 = same-day dough. Defaults to the style's value. */
-  fermentDays?: number;
+  /** Cold-ferment the dough balls in the fridge (true, the default) or make it same-day (false). */
+  coldFerment?: boolean;
 }
 
 export type IngredientId = 'flour' | 'water' | 'starter' | 'yeast' | 'salt' | 'sugar' | 'oil';
@@ -39,10 +39,11 @@ export interface Formula {
   starterPct?: number;
   starterHydrationPct?: number;
   /** Instant/active dry yeast as % of total flour (yeast only). Depends on fermentation length. */
-  yeastPct?: (fermentDays: number) => number;
+  yeastPct?: { sameDay: number; cold: number };
   /** Water temperature to aim for, °C. */
   waterTempC: number;
-  defaultFermentDays: number;
+  /** How long to cold-ferment, shown in the directions, e.g. "2–3 days". */
+  coldFermentDuration: string;
 }
 
 export interface StyleProfile {

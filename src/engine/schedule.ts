@@ -1,14 +1,13 @@
 import { STYLES } from './styles';
 import type { DoughInput, Step } from './types';
 
-const days = (n: number) => `${n} day${n === 1 ? '' : 's'}`;
-
 /** Fermentation and bake directions for the chosen dough. */
 export function buildSteps(input: Required<DoughInput>): Step[] {
   const style = STYLES[input.style];
-  const cold = input.fermentDays > 0;
+  const cold = input.coldFerment;
+  const duration = style.formulas[input.leavening].coldFermentDuration;
   const steps: Step[] =
-    input.leavening === 'sourdough' ? sourdoughSteps(input, cold) : yeastSteps(input, cold);
+    input.leavening === 'sourdough' ? sourdoughSteps(input, cold, duration) : yeastSteps(input, cold, duration);
 
   const tempF = Math.round((style.bake.tempC * 9) / 5 + 32);
   steps.push(
@@ -25,7 +24,7 @@ export function buildSteps(input: Required<DoughInput>): Step[] {
   return steps;
 }
 
-function sourdoughSteps(input: Required<DoughInput>, cold: boolean): Step[] {
+function sourdoughSteps(input: Required<DoughInput>, cold: boolean, coldDuration: string): Step[] {
   const steps: Step[] = [
     {
       title: 'Feed your starter',
@@ -34,12 +33,13 @@ function sourdoughSteps(input: Required<DoughInput>, cold: boolean): Step[] {
     },
     {
       title: 'Autolyse',
-      detail: 'Mix the flour and water until no dry flour remains. Cover and rest.',
+      detail: 'In the stand mixer bowl, mix the flour and water with the dough hook on low until no dry flour remains, 1–2 minutes. Cover and rest.',
       duration: '30–60 min',
     },
     {
       title: 'Mix',
-      detail: `Add the starter, salt${input.style === 'ny' ? ', sugar and oil' : ''}. Squeeze and fold until fully combined.`,
+      detail: `Add the starter, salt${input.style === 'ny' ? ', sugar and oil' : ''}. Mix with the dough hook on low until fully combined, then on medium-low until the dough pulls away from the bowl.`,
+      duration: '5–8 min',
     },
     {
       title: 'Stretch and folds',
@@ -57,7 +57,7 @@ function sourdoughSteps(input: Required<DoughInput>, cold: boolean): Step[] {
       {
         title: 'Cold ferment',
         detail: `Refrigerate at 3–4 °C / 37–40 °F.`,
-        duration: days(input.fermentDays),
+        duration: coldDuration,
       },
       {
         title: 'Warm up',
@@ -82,19 +82,20 @@ function sourdoughSteps(input: Required<DoughInput>, cold: boolean): Step[] {
   return steps;
 }
 
-function yeastSteps(input: Required<DoughInput>, cold: boolean): Step[] {
+function yeastSteps(input: Required<DoughInput>, cold: boolean, coldDuration: string): Step[] {
   const neapolitan = input.style === 'neapolitan';
   const steps: Step[] = [
     {
       title: 'Mix',
       detail: neapolitan
-        ? 'Dissolve the salt in the water, add the yeast, then add the flour gradually until a shaggy dough forms.'
-        : `Stir the yeast${input.style === 'ny' ? ' and sugar' : ''} into the water. Add the flour${input.style === 'ny' ? ', oil' : ''} and salt and mix until no dry flour remains.`,
+        ? 'In the stand mixer bowl, dissolve the salt in the water and add the yeast. With the dough hook on low, add the flour gradually until a shaggy dough forms.'
+        : `In the stand mixer bowl, stir the yeast${input.style === 'ny' ? ' and sugar' : ''} into the water. Add the flour${input.style === 'ny' ? ', oil' : ''} and salt and mix with the dough hook on low until no dry flour remains.`,
+      duration: '1–2 min',
     },
     {
       title: 'Knead',
-      detail: 'Knead by hand or with a dough hook until smooth and elastic.',
-      duration: '8–10 min',
+      detail: 'Knead with the dough hook on medium-low until smooth and elastic and the dough clears the sides of the bowl.',
+      duration: '6–8 min',
     },
   ];
 
@@ -105,7 +106,7 @@ function yeastSteps(input: Required<DoughInput>, cold: boolean): Step[] {
         title: 'Divide and ball',
         detail: `Divide into ${input.count} equal pieces, shape tight balls and put them in lightly oiled, covered containers.`,
       },
-      { title: 'Cold ferment', detail: 'Refrigerate at 3–4 °C / 37–40 °F.', duration: days(input.fermentDays) },
+      { title: 'Cold ferment', detail: 'Refrigerate at 3–4 °C / 37–40 °F.', duration: coldDuration },
       {
         title: 'Warm up',
         detail: 'Take the balls out of the fridge and let them rest, covered, at room temperature before stretching.',

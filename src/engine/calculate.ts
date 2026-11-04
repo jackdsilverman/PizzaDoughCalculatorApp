@@ -6,7 +6,6 @@ export const LIMITS = {
   diameterCm: { min: 20, max: 46 },
   count: { min: 1, max: 20 },
   hydrationPct: { min: 55, max: 80 },
-  fermentDays: { min: 0, max: 5 },
 } as const;
 
 /** Grams of yeast in one standard packet. */
@@ -35,16 +34,18 @@ export function calculateDough(raw: DoughInput): DoughResult {
       LIMITS.hydrationPct.min,
       LIMITS.hydrationPct.max,
     ),
-    fermentDays: Math.round(
-      clamp(raw.fermentDays ?? formula.defaultFermentDays, LIMITS.fermentDays.min, LIMITS.fermentDays.max),
-    ),
+    coldFerment: raw.coldFerment ?? true,
   };
 
   const ballGrams = ballWeightGrams(input.style, input.diameterCm);
   const totalDoughGrams = ballGrams * input.count;
 
   const yeastPct =
-    input.leavening === 'yeast' && formula.yeastPct ? formula.yeastPct(input.fermentDays) : 0;
+    input.leavening === 'yeast' && formula.yeastPct
+      ? input.coldFerment
+        ? formula.yeastPct.cold
+        : formula.yeastPct.sameDay
+      : 0;
   const starterPct =
     input.leavening === 'sourdough' && formula.starterPct
       ? formula.starterPct
@@ -116,10 +117,10 @@ export function calculateDough(raw: DoughInput): DoughResult {
   if (input.hydrationPct >= 72) {
     warnings.push('Above 72% hydration the dough will be sticky. Use wet hands and a bench scraper.');
   }
-  if (input.leavening === 'sourdough' && input.fermentDays === 0) {
+  if (input.leavening === 'sourdough' && !input.coldFerment) {
     warnings.push('Same-day sourdough depends heavily on starter strength and room temperature. Watch the dough, not the clock.');
   }
-  if (input.style === 'neapolitan' && input.leavening === 'yeast' && input.fermentDays === 0) {
+  if (input.style === 'neapolitan' && input.leavening === 'yeast' && !input.coldFerment) {
     warnings.push('Same-day Neapolitan uses very little yeast and needs a long room-temperature rise (8–10 h).');
   }
 
