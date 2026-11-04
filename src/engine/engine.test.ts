@@ -89,15 +89,15 @@ describe('advanced options', () => {
     expect((totalWater / totalFlour) * 100).toBeCloseTo(70, 6);
   });
 
-  it('longer cold ferments use less yeast and less starter', () => {
+  it('yeast is the same for any cold ferment length; longer ferments use less starter', () => {
     const yeast = (d: number) => g(calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: 40, count: 1, fermentDays: d }), 'yeast')!;
     const starter = (d: number) =>
       calculateDough({ style: 'ny', leavening: 'sourdough', diameterCm: 40, count: 1, fermentDays: d }).ingredients.find(
         (i) => i.id === 'starter',
       )!.bakersPct;
     expect(yeast(0)).toBeGreaterThan(yeast(1));
-    expect(yeast(2)).toBeGreaterThan(yeast(3));
-    expect(yeast(3)).toBeGreaterThan(yeast(5));
+    expect(yeast(1)).toBe(yeast(2));
+    expect(yeast(1)).toBe(yeast(5));
     expect(starter(0)).toBeGreaterThan(starter(1));
     expect(starter(1)).toBeGreaterThan(starter(2));
     expect(starter(3)).toBeGreaterThan(starter(4));

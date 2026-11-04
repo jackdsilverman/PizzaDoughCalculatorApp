@@ -3,16 +3,9 @@ import type { PizzaStyle, StyleProfile } from './types';
 /** 16 inches in cm. Jack's NY recipe makes 480 g balls, which is a standard 16" NY pie. */
 const SIXTEEN_INCHES_CM = 40.64;
 
-/**
- * Yeast curve for cold-fermented doughs: the reference % covers up to 2 days in the fridge,
- * and longer ferments scale it down proportionally so the dough doesn't overproof.
- */
+/** Yeast: one amount for same-day dough and one for any cold ferment, regardless of length. */
 function coldYeastCurve(sameDayPct: number, coldPct: number) {
-  return (days: number) => {
-    if (days <= 0) return sameDayPct;
-    if (days <= 2) return coldPct;
-    return (coldPct * 2) / days;
-  };
+  return (days: number) => (days <= 0 ? sameDayPct : coldPct);
 }
 
 /** Starter % by fermentation length: more starter for short ferments, less for long ones. */
