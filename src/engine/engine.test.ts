@@ -30,12 +30,12 @@ describe("NY style matches Jack's recipes (2 x 480 g)", () => {
   });
 
   it('yeast, same day uses a full packet', () => {
-    const r = calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: SIXTEEN, count: 2, fermentDays: 0 });
+    const r = calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: SIXTEEN, count: 2, coldFerment: false });
     expect(g(r, 'yeast')).toBeCloseTo(7, 1);
   });
 
   it('sourdough, corrected version totals 960 g', () => {
-    const r = calculateDough({ style: 'ny', leavening: 'sourdough', diameterCm: SIXTEEN, count: 2, fermentDays: 2 });
+    const r = calculateDough({ style: 'ny', leavening: 'sourdough', diameterCm: SIXTEEN, count: 2 });
     expect(g(r, 'flour')).toBeCloseTo(501, 0);
     expect(g(r, 'starter')).toBeCloseTo(85, 0);
     expect(g(r, 'water')).toBeCloseTo(312, 0);
@@ -69,8 +69,8 @@ describe('scaling', () => {
   it('dough weight (excluding yeast) equals balls x count for every combination', () => {
     for (const style of styles) {
       for (const leavening of leavenings) {
-        for (const fermentDays of [0, 1, 2, 3, 5]) {
-          const r = calculateDough({ style, leavening, diameterCm: 33, count: 4, fermentDays, hydrationPct: 70 });
+        for (const coldFerment of [true, false]) {
+          const r = calculateDough({ style, leavening, diameterCm: 33, count: 4, coldFerment, hydrationPct: 70 });
           const total = r.ingredients.filter((i) => i.id !== 'yeast').reduce((s, i) => s + i.grams, 0);
           expect(total).toBeCloseTo(r.ballGrams * 4, 6);
           r.ingredients.forEach((i) => expect(i.grams).toBeGreaterThan(0));
@@ -89,21 +89,20 @@ describe('advanced options', () => {
     expect((totalWater / totalFlour) * 100).toBeCloseTo(70, 6);
   });
 
-  it('yeast is the same for any cold ferment length; starter is the same for every length', () => {
-    const yeast = (d: number) => g(calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: 40, count: 1, fermentDays: d }), 'yeast')!;
-    const starter = (d: number) =>
-      calculateDough({ style: 'ny', leavening: 'sourdough', diameterCm: 40, count: 1, fermentDays: d }).ingredients.find(
-        (i) => i.id === 'starter',
-      )!.bakersPct;
-    expect(yeast(0)).toBeGreaterThan(yeast(1));
-    expect(yeast(1)).toBe(yeast(2));
-    expect(yeast(1)).toBe(yeast(5));
-    for (const d of [0, 1, 3, 5]) expect(starter(d)).toBe(starter(2));
+  it('cold ferment uses less yeast than same-day; starter is the same either way', () => {
+    const run = (leavening: Leavening, coldFerment: boolean) =>
+      calculateDough({ style: 'ny', leavening, diameterCm: 40, count: 1, coldFerment });
+    expect(g(run('yeast', false), 'yeast')!).toBeGreaterThan(g(run('yeast', true), 'yeast')!);
+    expect(g(run('sourdough', false), 'starter')).toBe(g(run('sourdough', true), 'starter'));
+  });
+
+  it('defaults to cold ferment', () => {
+    expect(calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: 40, count: 1 }).input.coldFerment).toBe(true);
   });
 
   it('clamps out-of-range input', () => {
-    const r = calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: 500, count: 0, hydrationPct: 200, fermentDays: 99 });
-    expect(r.input).toMatchObject({ diameterCm: 46, count: 1, hydrationPct: 80, fermentDays: 5 });
+    const r = calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: 500, count: 0, hydrationPct: 200 });
+    expect(r.input).toMatchObject({ diameterCm: 46, count: 1, hydrationPct: 80 });
     expect(r.warnings.length).toBeGreaterThan(0);
   });
 });
@@ -126,18 +125,18 @@ describe('style differences', () => {
 
 describe('directions', () => {
   it("sourdough cold ferment follows Jack's process", () => {
-    const r = calculateDough({ style: 'ny', leavening: 'sourdough', diameterCm: SIXTEEN, count: 2, fermentDays: 3 });
+    const r = calculateDough({ style: 'ny', leavening: 'sourdough', diameterCm: SIXTEEN, count: 2 });
     const titles = r.steps.map((s) => s.title);
     expect(titles.indexOf('Autolyse')).toBeLessThan(titles.indexOf('Mix'));
     expect(r.steps.find((s) => s.title === 'Autolyse')!.duration).toBe('30–60 min');
     expect(r.steps.find((s) => s.title === 'Stretch and folds')!.detail).toMatch(/4–5 sets.*20–30 minutes/);
-    expect(r.steps.find((s) => s.title === 'Cold ferment')!.duration).toBe('3 days');
+    expect(r.steps.find((s) => s.title === 'Cold ferment')!.duration).toBe('2–3 days');
     expect(r.steps.find((s) => s.title === 'Warm up')!.duration).toBe('3–4 h');
     expect(titles.at(-1)).toBe('Stretch, top and bake');
   });
 
   it('same-day doughs have no cold ferment step', () => {
-    const r = calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: SIXTEEN, count: 2, fermentDays: 0 });
+    const r = calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: SIXTEEN, count: 2, coldFerment: false });
     expect(r.steps.some((s) => s.title === 'Cold ferment')).toBe(false);
     expect(r.steps.some((s) => s.title === 'Bulk rise')).toBe(true);
   });

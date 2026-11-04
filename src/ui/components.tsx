@@ -1,6 +1,6 @@
 import Slider from '@react-native-community/slider';
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import { useTheme } from './theme';
 
 export function Card({ title, children, right }: { title: string; children: ReactNode; right?: ReactNode }) {
@@ -87,7 +87,37 @@ export function LabeledSlider({
   );
 }
 
+export function ToggleRow({
+  label,
+  detail,
+  value,
+  onChange,
+}: {
+  label: string;
+  detail?: string;
+  value: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  const t = useTheme();
+  return (
+    <View style={styles.toggleRow}>
+      <View style={{ flex: 1 }}>
+        <Text style={[styles.label, { color: t.muted }]}>{label}</Text>
+        {detail && <Text style={[styles.value, { color: t.text }]}>{detail}</Text>}
+      </View>
+      <Switch
+        accessibilityLabel={label}
+        value={value}
+        onValueChange={onChange}
+        trackColor={{ true: t.accent, false: t.border }}
+        thumbColor="#FFFFFF"
+      />
+    </View>
+  );
+}
+
 export const styles = StyleSheet.create({
+  toggleRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   card: { borderWidth: 1, borderRadius: 16, padding: 16, gap: 12 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cardTitle: { fontSize: 17, fontWeight: '700' },

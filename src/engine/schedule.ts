@@ -1,14 +1,13 @@
 import { STYLES } from './styles';
 import type { DoughInput, Step } from './types';
 
-const days = (n: number) => `${n} day${n === 1 ? '' : 's'}`;
-
 /** Fermentation and bake directions for the chosen dough. */
 export function buildSteps(input: Required<DoughInput>): Step[] {
   const style = STYLES[input.style];
-  const cold = input.fermentDays > 0;
+  const cold = input.coldFerment;
+  const duration = style.formulas[input.leavening].coldFermentDuration;
   const steps: Step[] =
-    input.leavening === 'sourdough' ? sourdoughSteps(input, cold) : yeastSteps(input, cold);
+    input.leavening === 'sourdough' ? sourdoughSteps(input, cold, duration) : yeastSteps(input, cold, duration);
 
   const tempF = Math.round((style.bake.tempC * 9) / 5 + 32);
   steps.push(
@@ -25,7 +24,7 @@ export function buildSteps(input: Required<DoughInput>): Step[] {
   return steps;
 }
 
-function sourdoughSteps(input: Required<DoughInput>, cold: boolean): Step[] {
+function sourdoughSteps(input: Required<DoughInput>, cold: boolean, coldDuration: string): Step[] {
   const steps: Step[] = [
     {
       title: 'Feed your starter',
@@ -57,7 +56,7 @@ function sourdoughSteps(input: Required<DoughInput>, cold: boolean): Step[] {
       {
         title: 'Cold ferment',
         detail: `Refrigerate at 3–4 °C / 37–40 °F.`,
-        duration: days(input.fermentDays),
+        duration: coldDuration,
       },
       {
         title: 'Warm up',
@@ -82,7 +81,7 @@ function sourdoughSteps(input: Required<DoughInput>, cold: boolean): Step[] {
   return steps;
 }
 
-function yeastSteps(input: Required<DoughInput>, cold: boolean): Step[] {
+function yeastSteps(input: Required<DoughInput>, cold: boolean, coldDuration: string): Step[] {
   const neapolitan = input.style === 'neapolitan';
   const steps: Step[] = [
     {
@@ -105,7 +104,7 @@ function yeastSteps(input: Required<DoughInput>, cold: boolean): Step[] {
         title: 'Divide and ball',
         detail: `Divide into ${input.count} equal pieces, shape tight balls and put them in lightly oiled, covered containers.`,
       },
-      { title: 'Cold ferment', detail: 'Refrigerate at 3–4 °C / 37–40 °F.', duration: days(input.fermentDays) },
+      { title: 'Cold ferment', detail: 'Refrigerate at 3–4 °C / 37–40 °F.', duration: coldDuration },
       {
         title: 'Warm up',
         detail: 'Take the balls out of the fridge and let them rest, covered, at room temperature before stretching.',

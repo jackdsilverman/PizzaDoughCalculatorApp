@@ -2,11 +2,7 @@ import type { PizzaStyle, StyleProfile } from './types';
 
 /** 16 inches in cm. Jack's NY recipe makes 480 g balls, which is a standard 16" NY pie. */
 const SIXTEEN_INCHES_CM = 40.64;
-
-/** Yeast: one amount for same-day dough and one for any cold ferment, regardless of length. */
-function coldYeastCurve(sameDayPct: number, coldPct: number) {
-  return (days: number) => (days <= 0 ? sameDayPct : coldPct);
-}
+const TWELVE_INCHES_CM = 30.48;
 
 /**
  * Baker's percentages.
@@ -35,9 +31,9 @@ export const STYLES: Record<PizzaStyle, StyleProfile> = {
         sugarPct: (13 / 545) * 100,
         saltPct: (9.5 / 545) * 100,
         // 1 packet (7 g) same-day; 13/16 packet (~5.7 g) for a cold ferment.
-        yeastPct: coldYeastCurve((7 / 545) * 100, ((7 * 13) / 16 / 545) * 100),
+        yeastPct: { sameDay: (7 / 545) * 100, cold: ((7 * 13) / 16 / 545) * 100 },
         waterTempC: 39,
-        defaultFermentDays: 2,
+        coldFermentDuration: '1–3 days',
       },
       sourdough: {
         flourName: 'Bread flour',
@@ -48,7 +44,7 @@ export const STYLES: Record<PizzaStyle, StyleProfile> = {
         starterPct: (85 / 543.5) * 100,
         starterHydrationPct: 100,
         waterTempC: 26,
-        defaultFermentDays: 2,
+        coldFermentDuration: '2–3 days',
       },
     },
   },
@@ -56,8 +52,8 @@ export const STYLES: Record<PizzaStyle, StyleProfile> = {
     id: 'neapolitan',
     name: 'Neapolitan',
     referenceBallGrams: 260,
-    referenceDiameterCm: 30,
-    defaultDiameterCm: 30,
+    referenceDiameterCm: TWELVE_INCHES_CM,
+    defaultDiameterCm: TWELVE_INCHES_CM,
     bake: { tempC: 450, minutes: '60–90 sec', surface: 'pizza oven floor at 430–485 °C' },
     formulas: {
       yeast: {
@@ -66,9 +62,9 @@ export const STYLES: Record<PizzaStyle, StyleProfile> = {
         oilPct: 0,
         sugarPct: 0,
         saltPct: 2.8,
-        yeastPct: coldYeastCurve(0.15, 0.1),
+        yeastPct: { sameDay: 0.15, cold: 0.1 },
         waterTempC: 20,
-        defaultFermentDays: 1,
+        coldFermentDuration: '1–3 days',
       },
       sourdough: {
         flourName: 'Tipo 00 flour',
@@ -79,7 +75,7 @@ export const STYLES: Record<PizzaStyle, StyleProfile> = {
         starterPct: 10,
         starterHydrationPct: 100,
         waterTempC: 20,
-        defaultFermentDays: 1,
+        coldFermentDuration: '2–3 days',
       },
     },
   },
@@ -101,9 +97,9 @@ export const STYLES: Record<PizzaStyle, StyleProfile> = {
         oilPct: 0,
         sugarPct: 0,
         saltPct: 2,
-        yeastPct: coldYeastCurve(0.8, 0.5),
+        yeastPct: { sameDay: 0.8, cold: 0.5 },
         waterTempC: 30,
-        defaultFermentDays: 2,
+        coldFermentDuration: '1–3 days',
       },
       sourdough: {
         flourName: 'Bread or high-gluten flour',
@@ -114,7 +110,7 @@ export const STYLES: Record<PizzaStyle, StyleProfile> = {
         starterPct: 15,
         starterHydrationPct: 100,
         waterTempC: 26,
-        defaultFermentDays: 2,
+        coldFermentDuration: '2–3 days',
       },
     },
   },

@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   calculateDough,
   cmToInches,
-  DIAMETER_SLIDER,
+  DIAMETER_SLIDER_INCHES,
   formatAmount,
   formatDiameter,
   GRAMS_PER_OUNCE,
@@ -15,7 +15,7 @@ import {
   type PizzaStyle,
   type UnitSystem,
 } from '../engine';
-import { Card, LabeledSlider, Segmented } from './components';
+import { Card, LabeledSlider, Segmented, ToggleRow } from './components';
 import { useTheme } from './theme';
 
 const STYLE_OPTIONS: { value: PizzaStyle; label: string }[] = [
@@ -44,7 +44,7 @@ export function CalculatorScreen() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   // null = use the style's default.
   const [hydration, setHydration] = useState<number | null>(null);
-  const [fermentDays, setFermentDays] = useState<number | null>(null);
+  const [coldFerment, setColdFerment] = useState(true);
 
   const result = useMemo(
     () =>
@@ -54,26 +54,24 @@ export function CalculatorScreen() {
         diameterCm,
         count,
         hydrationPct: hydration ?? undefined,
-        fermentDays: fermentDays ?? undefined,
+        coldFerment,
       }),
-    [style, leavening, diameterCm, count, hydration, fermentDays],
+    [style, leavening, diameterCm, count, hydration, coldFerment],
   );
 
   const chooseStyle = (s: PizzaStyle) => {
     setStyle(s);
     setDiameterCm(STYLES[s].defaultDiameterCm);
     setHydration(null);
-    setFermentDays(null);
   };
   const chooseLeavening = (l: Leavening) => {
     setLeavening(l);
     setHydration(null);
-    setFermentDays(null);
   };
 
-  const slider = DIAMETER_SLIDER[units];
-  const sliderValue = units === 'metric' ? Math.round(diameterCm) : Math.round(cmToInches(diameterCm));
-  const onDiameter = (v: number) => setDiameterCm(units === 'metric' ? v : inchesToCm(v));
+  const slider = DIAMETER_SLIDER_INCHES;
+  const sliderValue = Math.round(cmToInches(diameterCm));
+  const onDiameter = (v: number) => setDiameterCm(inchesToCm(v));
 
   const weight = (g: number) =>
     units === 'metric' ? `${Math.round(g)} g` : `${(g / GRAMS_PER_OUNCE).toFixed(1)} oz`;
@@ -96,7 +94,7 @@ export function CalculatorScreen() {
         <Segmented label="Leavening" options={LEAVENING_OPTIONS} value={leavening} onChange={chooseLeavening} />
         <LabeledSlider
           label="Diameter"
-          valueLabel={formatDiameter(diameterCm, units)}
+          valueLabel={formatDiameter(diameterCm)}
           value={sliderValue}
           min={slider.min}
           max={slider.max}
@@ -112,8 +110,18 @@ export function CalculatorScreen() {
           step={1}
           onChange={setCount}
         />
+        <ToggleRow
+          label="Cold ferment"
+          detail={
+            coldFerment
+              ? `In the fridge for ${STYLES[style].formulas[leavening].coldFermentDuration}`
+              : 'Same-day dough'
+          }
+          value={coldFerment}
+          onChange={setColdFerment}
+        />
         <Pressable accessibilityRole="button" onPress={() => setShowAdvanced((v) => !v)}>
-          <Text style={[s.link, { color: t.accent }]}>{showAdvanced ? 'Hide advanced' : 'Advanced options'}</Text>
+          <Text style={[s.link, { color: t.accent }]}>{showAdvanced ? 'Hide advanced' : 'Advanced: hydration'}</Text>
         </Pressable>
         {showAdvanced && (
           <>
@@ -126,23 +134,8 @@ export function CalculatorScreen() {
               step={1}
               onChange={setHydration}
             />
-            <LabeledSlider
-              label="Cold ferment"
-              valueLabel={input.fermentDays === 0 ? 'Same day' : `${input.fermentDays} day${input.fermentDays === 1 ? '' : 's'}`}
-              value={input.fermentDays}
-              min={LIMITS.fermentDays.min}
-              max={LIMITS.fermentDays.max}
-              step={1}
-              onChange={setFermentDays}
-            />
-            {(hydration !== null || fermentDays !== null) && (
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => {
-                  setHydration(null);
-                  setFermentDays(null);
-                }}
-              >
+            {hydration !== null && (
+              <Pressable accessibilityRole="button" onPress={() => setHydration(null)}>
                 <Text style={[s.link, { color: t.muted }]}>Reset to {STYLES[style].name} defaults</Text>
               </Pressable>
             )}

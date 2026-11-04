@@ -7,11 +7,8 @@ export const cmToInches = (cm: number) => cm / CM_PER_INCH;
 export const inchesToCm = (inches: number) => inches * CM_PER_INCH;
 export const cToF = (c: number) => (c * 9) / 5 + 32;
 
-/** Slider ranges per unit system. Metric is the default. */
-export const DIAMETER_SLIDER = {
-  metric: { min: 20, max: 46, step: 1, unit: 'cm' },
-  imperial: { min: 8, max: 18, step: 1, unit: 'in' },
-} as const;
+/** The diameter slider is always in inches, whatever the unit toggle says (per Jack). */
+export const DIAMETER_SLIDER_INCHES = { min: 8, max: 18, step: 1 } as const;
 
 /** Approximate grams per teaspoon, used for volume hints on small ingredients in imperial. */
 const GRAMS_PER_TSP: Partial<Record<Ingredient['id'], number>> = {
@@ -20,8 +17,8 @@ const GRAMS_PER_TSP: Partial<Record<Ingredient['id'], number>> = {
   oil: 4.5,
 };
 
-export function formatDiameter(cm: number, units: UnitSystem): string {
-  return units === 'metric' ? `${Math.round(cm)} cm` : `${Math.round(cmToInches(cm))}"`;
+export function formatDiameter(cm: number): string {
+  return `${Math.round(cmToInches(cm))}"`;
 }
 
 /** Formats an ingredient amount for display. Grams stay the source of truth. */
