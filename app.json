@@ -8,20 +8,40 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jackdsilverman.pizzadough"
+      "bundleIdentifier": "com.jackdsilverman.pizzadough",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#FFF4E6",
+        "backgroundColor": "#C2410C",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.jackdsilverman.pizzadough"
+      "package": "com.jackdsilverman.pizzadough",
+      "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "backgroundColor": "#FBF7F2",
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#FBF7F2",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#16120F"
+          }
+        }
+      ]
+    ]
   }
 }
