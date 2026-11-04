@@ -5,7 +5,7 @@ A pizza dough calculator for iOS and Android. Pick a style (New York, Neapolitan
 ## Status
 
 - [x] Recipe engine (`src/engine`): pure TypeScript, no UI dependencies
-- [ ] App (Expo / React Native)
+- [x] App (Expo / React Native): single calculator screen
 - [ ] Polish and device testing
 - [ ] Store release
 
@@ -30,6 +30,10 @@ NY numbers come from tested recipes. Neapolitan and New Haven are starting defau
 
 ```sh
 npm install
-npm test
+npm start          # Expo dev server; scan the QR code with Expo Go
+npm run web        # run in a browser
+npm test           # engine tests
 npm run typecheck
 ```
+
+The UI lives in `src/ui/` (`CalculatorScreen.tsx`) and imports the engine from `src/engine/`.
