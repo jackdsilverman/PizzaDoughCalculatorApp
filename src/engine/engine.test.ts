@@ -89,7 +89,7 @@ describe('advanced options', () => {
     expect((totalWater / totalFlour) * 100).toBeCloseTo(70, 6);
   });
 
-  it('yeast is the same for any cold ferment length; longer ferments use less starter', () => {
+  it('yeast is the same for any cold ferment length; starter is the same for every length', () => {
     const yeast = (d: number) => g(calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: 40, count: 1, fermentDays: d }), 'yeast')!;
     const starter = (d: number) =>
       calculateDough({ style: 'ny', leavening: 'sourdough', diameterCm: 40, count: 1, fermentDays: d }).ingredients.find(
@@ -98,9 +98,7 @@ describe('advanced options', () => {
     expect(yeast(0)).toBeGreaterThan(yeast(1));
     expect(yeast(1)).toBe(yeast(2));
     expect(yeast(1)).toBe(yeast(5));
-    expect(starter(0)).toBeGreaterThan(starter(1));
-    expect(starter(1)).toBeGreaterThan(starter(2));
-    expect(starter(3)).toBeGreaterThan(starter(4));
+    for (const d of [0, 1, 3, 5]) expect(starter(d)).toBe(starter(2));
   });
 
   it('clamps out-of-range input', () => {

@@ -8,16 +8,6 @@ function coldYeastCurve(sameDayPct: number, coldPct: number) {
   return (days: number) => (days <= 0 ? sameDayPct : coldPct);
 }
 
-/** Starter % by fermentation length: more starter for short ferments, less for long ones. */
-function starterCurve(sameDay: number, oneDay: number, twoToThree: number, fourPlus: number) {
-  return (days: number) => {
-    if (days <= 0) return sameDay;
-    if (days < 2) return oneDay;
-    if (days <= 3) return twoToThree;
-    return fourPlus;
-  };
-}
-
 /**
  * Baker's percentages.
  *
@@ -130,12 +120,3 @@ export const STYLES: Record<PizzaStyle, StyleProfile> = {
   },
 };
 
-/**
- * Starter % for a given ferment length, anchored on the style's reference value
- * (which is tuned for a 2–3 day cold ferment).
- */
-export function starterPctFor(referencePct: number, fermentDays: number): number {
-  return starterCurve(referencePct * 1.3, referencePct * 1.15, referencePct, referencePct * 0.75)(
-    fermentDays,
-  );
-}

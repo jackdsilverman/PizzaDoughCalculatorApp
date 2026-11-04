@@ -23,7 +23,7 @@ How it works:
 
 - Each style + leavening pair is a set of **baker's percentages** (`src/engine/styles.ts`). Hydration counts the flour and water inside the starter.
 - **Ball weight scales with pizza area** from a reference ball (NY: 480 g at 16").
-- **Advanced options**: hydration (55–80%) and cold-ferment days (0 = same day, up to 5). Yeast has one amount for same-day dough and one for any cold ferment. Longer ferments use less starter.
+- **Advanced options**: hydration (55–80%) and cold-ferment days (0 = same day, up to 5). Yeast has one amount for same-day dough and one for any cold ferment. Starter stays the same at every length.
 - **Units**: grams are the source of truth. Imperial shows ounces, with spoon hints for yeast, sugar and oil.
 
 NY numbers come from tested recipes. Neapolitan and New Haven are starting defaults.

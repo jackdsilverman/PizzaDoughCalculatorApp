@@ -1,4 +1,4 @@
-import { STYLES, starterPctFor } from './styles';
+import { STYLES } from './styles';
 import { buildSteps } from './schedule';
 import type { DoughInput, DoughResult, Ingredient } from './types';
 
@@ -47,7 +47,7 @@ export function calculateDough(raw: DoughInput): DoughResult {
     input.leavening === 'yeast' && formula.yeastPct ? formula.yeastPct(input.fermentDays) : 0;
   const starterPct =
     input.leavening === 'sourdough' && formula.starterPct
-      ? starterPctFor(formula.starterPct, input.fermentDays)
+      ? formula.starterPct
       : 0;
 
   // Total dough = flour x (100% + water% + salt% + sugar% + oil%) / 100.
