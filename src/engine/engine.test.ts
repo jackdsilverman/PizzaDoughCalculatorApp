@@ -135,6 +135,13 @@ describe('directions', () => {
     expect(titles.at(-1)).toBe('Stretch, top and bake');
   });
 
+  it('directions assume a stand mixer', () => {
+    for (const leavening of ['yeast', 'sourdough'] as const) {
+      const r = calculateDough({ style: 'ny', leavening, diameterCm: SIXTEEN, count: 2 });
+      expect(r.steps.find((s) => s.title === 'Mix')!.detail).toMatch(/dough hook/);
+    }
+  });
+
   it('same-day doughs have no cold ferment step', () => {
     const r = calculateDough({ style: 'ny', leavening: 'yeast', diameterCm: SIXTEEN, count: 2, coldFerment: false });
     expect(r.steps.some((s) => s.title === 'Cold ferment')).toBe(false);

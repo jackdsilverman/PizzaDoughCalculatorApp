@@ -33,12 +33,13 @@ function sourdoughSteps(input: Required<DoughInput>, cold: boolean, coldDuration
     },
     {
       title: 'Autolyse',
-      detail: 'Mix the flour and water until no dry flour remains. Cover and rest.',
+      detail: 'In the stand mixer bowl, mix the flour and water with the dough hook on low until no dry flour remains, 1–2 minutes. Cover and rest.',
       duration: '30–60 min',
     },
     {
       title: 'Mix',
-      detail: `Add the starter, salt${input.style === 'ny' ? ', sugar and oil' : ''}. Squeeze and fold until fully combined.`,
+      detail: `Add the starter, salt${input.style === 'ny' ? ', sugar and oil' : ''}. Mix with the dough hook on low until fully combined, then on medium-low until the dough pulls away from the bowl.`,
+      duration: '5–8 min',
     },
     {
       title: 'Stretch and folds',
@@ -87,13 +88,14 @@ function yeastSteps(input: Required<DoughInput>, cold: boolean, coldDuration: st
     {
       title: 'Mix',
       detail: neapolitan
-        ? 'Dissolve the salt in the water, add the yeast, then add the flour gradually until a shaggy dough forms.'
-        : `Stir the yeast${input.style === 'ny' ? ' and sugar' : ''} into the water. Add the flour${input.style === 'ny' ? ', oil' : ''} and salt and mix until no dry flour remains.`,
+        ? 'In the stand mixer bowl, dissolve the salt in the water and add the yeast. With the dough hook on low, add the flour gradually until a shaggy dough forms.'
+        : `In the stand mixer bowl, stir the yeast${input.style === 'ny' ? ' and sugar' : ''} into the water. Add the flour${input.style === 'ny' ? ', oil' : ''} and salt and mix with the dough hook on low until no dry flour remains.`,
+      duration: '1–2 min',
     },
     {
       title: 'Knead',
-      detail: 'Knead by hand or with a dough hook until smooth and elastic.',
-      duration: '8–10 min',
+      detail: 'Knead with the dough hook on medium-low until smooth and elastic and the dough clears the sides of the bowl.',
+      duration: '6–8 min',
     },
   ];
 
