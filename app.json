@@ -42,6 +42,12 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "98ee4cfe-9548-44f0-9e05-26d73ea06722"
+      }
+    },
+    "owner": "jack_silverman"
   }
 }
