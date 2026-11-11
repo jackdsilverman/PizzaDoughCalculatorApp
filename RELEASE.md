@@ -33,7 +33,7 @@ Build numbers increase automatically (`appVersionSource: remote` with `autoIncre
 ## Before submitting for review
 
 - **Screenshots**: 6.9" and 6.5" iPhone, plus phone screenshots for Play.
-- **Privacy**: the app collects no data and makes no network requests, so answer "no data collected" on both stores. You still need a privacy policy URL; a one-line page saying so is enough.
+- **Privacy**: the app collects no data and makes no network requests, so answer "no data collected" on both stores. Privacy policy URL: https://jackdsilverman.github.io/PizzaDoughCalculatorApp/privacy.html. Support URL: https://jackdsilverman.github.io/PizzaDoughCalculatorApp/support.html. Both are served by GitHub Pages from `docs/` on `main` (Settings > Pages > Deploy from a branch > main, /docs).
 - **Export compliance**: `ITSAppUsesNonExemptEncryption` is already set to `false` in `app.json`.
 - **Play content rating questionnaire and target audience**: the app has no ads, accounts or user content.
 
